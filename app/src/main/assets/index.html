@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ألعاب القعدة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Lalezar&display=swap" rel="stylesheet">
+<style>
+/* VOICE: لمّة قهوة بلدي، مرحة وواضحة وسريعة على الموبايل
+   IDEA: علبة ألعاب خشب مفتوحة على ترابيزة تركواز
+   PICTURE: اللوح نفسه هو الصورة: سلم وتعبان مرسومين، صليب لودو، ومربع بنك الحظ
+   COLOUR and TYPE: أرضية تركواز غامق، كروت عاجي، مرجاني للأزرار، ذهبي للعناوين؛ Lalezar للعناوين وCairo للنص
+   LAYOUT: عمود واحد: عنوان، لاعبين، لوح، زهر وأزرار تحت الإبهام */
+:root{color-scheme:dark;--bg:#0b5d63;--deep:#06383c;--card:#fff6e6;--ink:#1c2628;--gold:#ffd23f;--coral:#ff6b4a;--mut:#5d6b6d}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:radial-gradient(circle at 15% 0,#14838c 0,transparent 55%),radial-gradient(circle at 100% 100%,#0a4f55 0,transparent 50%),var(--bg);background-attachment:fixed;color:#fff;font:16px/1.55 Cairo,Tahoma,sans-serif;min-height:100vh;overflow-x:clip;-webkit-user-select:none;user-select:none}
+.screen{max-width:560px;margin:0 auto;padding:14px 12px 28px}
+h1{font:400 clamp(44px,12vw,60px)/1.05 Lalezar,Cairo,sans-serif;margin:10px 0 6px;color:var(--gold);text-shadow:0 4px 0 var(--deep)}
+.hero p{margin:0 0 20px;opacity:.92;max-width:36ch;font-size:17px}
+.games{display:grid;gap:14px}
+.gcard{display:flex;align-items:center;gap:14px;background:var(--card);color:var(--ink);border:0;border-radius:20px;padding:12px;text-align:start;font:inherit;cursor:pointer;box-shadow:0 6px 0 var(--deep),0 12px 26px #0004;transition:transform .12s,box-shadow .12s}
+.gcard:active{transform:translateY(4px);box-shadow:0 2px 0 var(--deep)}
+.gcard svg{width:92px;height:92px;flex:none;border-radius:14px}
+.gcard b{display:block;font:400 30px/1.1 Lalezar,Cairo,sans-serif;color:#c2361f}
+.gcard small{color:var(--mut);font-size:14px;display:block}
+.tip{margin-top:22px;font-size:14px;opacity:.8}
+.btn{font:700 16px Cairo,sans-serif;min-height:48px;padding:0 18px;border-radius:14px;border:0;background:var(--card);color:var(--ink);box-shadow:0 4px 0 #0004;cursor:pointer}
+.btn.big{background:var(--coral);color:#fff;box-shadow:0 4px 0 #a83a22}
+.btn.ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 2px currentColor}
+.btn:disabled{opacity:.4}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.panel{background:var(--card);color:var(--ink);border-radius:22px;padding:18px;box-shadow:0 6px 0 var(--deep)}
+.panel h2{font:400 36px/1.1 Lalezar,Cairo,sans-serif;margin:0 0 10px;color:#c2361f}
+.lbl{font-weight:700;margin:0 0 6px}
+.seg{display:flex;gap:8px;margin:0 0 16px}.seg .btn{flex:1;background:#eadfca}.seg .btn.on{background:var(--bg);color:#fff}
+.prow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dot{width:28px;height:28px;border-radius:50%;background:var(--c);flex:none;border:3px solid #fff;box-shadow:0 0 0 2px var(--c)}
+.prow input{flex:1;font:600 16px Cairo,sans-serif;min-height:46px;border-radius:12px;border:2px solid #0b5d6333;padding:0 12px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
+.tog{min-width:92px;min-height:46px;border-radius:12px;border:0;font:700 15px Cairo,sans-serif;background:var(--bg);color:#fff;cursor:pointer}
+.tog.ai{background:#eadfca;color:var(--ink)}
+.acts{display:grid;gap:10px;margin-top:16px}.acts .ghost{color:var(--ink)}
+.rules{font-size:14px;color:var(--mut);margin:12px 0 0}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.top h2{flex:1;margin:0;font:400 30px/1.1 Lalezar,Cairo,sans-serif;color:var(--gold)}
+.icon{min-height:42px;font:700 14px Cairo,sans-serif;border-radius:12px;border:0;background:#ffffff24;color:#fff;padding:0 14px;cursor:pointer}
+#pbar{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px}
+.chip{flex:1 1 0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:6px;background:#00000030;border-radius:12px;padding:6px 10px;border:2px solid transparent;font-size:14px;transition:background .2s}
+.chip i{width:14px;height:14px;border-radius:50%;background:var(--c);flex:none;box-shadow:0 0 0 2px #fff}
+.chip b{font-weight:700;max-width:7em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip small{opacity:.88;white-space:nowrap;font-size:13px;grid-column:1/-1}
+.chip.on{border-color:var(--c);background:#ffffff2a}
+.chip.out{opacity:.4}
+#board{position:relative}
+.ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-top:14px;background:#00000028;border-radius:18px;padding:12px}
+#dice{display:flex;gap:8px}
+.die{width:50px;height:50px;background:#fff;border-radius:12px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:7px;box-shadow:0 4px 0 #c9c1b0}
+.die b{border-radius:50%;margin:2px}.die b.on{background:#1d2a2e}
+#dice.pop .die{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.15) rotate(8deg)}}
+#msg{flex:1 1 150px;margin:0;font-weight:700;border-inline-start:5px solid var(--c,#fff);padding-inline-start:10px;min-height:1.6em}
+#act{display:flex;gap:8px;flex-wrap:wrap;width:100%}
+#act:empty{display:none}
+#act .btn{flex:1 1 40%}
+.wait{opacity:.85;font-size:14px;padding:10px 0}
+.tok{position:absolute;width:var(--s,6%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffa 0 18%,transparent 20%),var(--c);border:2px solid #fff;box-shadow:0 2px 0 #0006,0 3px 6px #0005;transform:translate(-50%,-50%);transition:left .15s,top .15s,width .15s;z-index:3;pointer-events:none}
+/* سلم وتعبان */
+.sl{position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 8px 0 var(--deep),0 14px 30px #0005;direction:ltr;border:4px solid #fff6e6}
+.slg{position:absolute;inset:0;display:grid;grid-template:repeat(10,1fr)/repeat(10,1fr)}
+.slc{position:relative;font:700 clamp(9px,2.5vw,13px) Cairo,sans-serif;color:#0008}
+.slc span{position:absolute;top:1px;left:3px}
+.c0{background:#fff3d6}.c1{background:#ffd9a8}.c2{background:#c7ecdf}.c3{background:#ffc9bb}
+.sl svg{position:absolute;inset:0;width:100%;height:100%}
+.sl .tok{--s:6.6%}
+.sl.slide .tok{transition-duration:.7s}
+/* لودو */
+.lw{position:relative;aspect-ratio:1;direction:ltr;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 0 var(--deep),0 14px 30px #0005;border:4px solid #fff6e6}
+.lg{position:absolute;inset:0;display:grid;grid-template:repeat(15,1fr)/repeat(15,1fr)}
+.lc{border:.5px solid #0002;display:grid;place-items:center;font-size:clamp(10px,3vw,16px);color:#0006;background:#fff;line-height:1}
+.lbase{background:var(--c);padding:16.66%}
+.lin{background:#fff;border-radius:14%;height:100%;display:grid;grid-template:1fr 1fr/1fr 1fr;place-items:center}
+.lin i{width:55%;aspect-ratio:1;border-radius:50%;background:var(--c);opacity:.3}
+.lctr{width:100%;height:100%;display:block}
+.lw .tok{--s:5.6%}.lw .tok.sm{--s:4%}
+.tok.can{animation:bob .55s infinite alternate;box-shadow:0 0 0 3px #fff,0 0 0 6px var(--c);z-index:5}
+@keyframes bob{to{transform:translate(-50%,-64%)}}
+/* بنك الحظ */
+.bw{position:relative;aspect-ratio:1;direction:ltr;border-radius:12px;overflow:hidden;box-shadow:0 8px 0 var(--deep),0 14px 30px #0005}
+.bgr{position:absolute;inset:0;display:grid;grid-template:repeat(11,1fr)/repeat(11,1fr);gap:1px;background:#0b3d40;padding:1px}
+.bc{position:relative;background:#fff8ec;border:0;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 clamp(7px,2.05vw,11px)/1.1 Cairo,sans-serif;color:#1d2a2e;overflow:hidden;cursor:pointer;border-bottom:4px solid var(--o,transparent);direction:rtl}
+.bc .strip{position:absolute;top:0;left:0;right:0;height:20%}
+.bc .bn{padding:18% 1px 0;text-align:center;overflow-wrap:normal;white-space:nowrap}.bc.long .bn{font-size:.8em;letter-spacing:-.02em}.bc.big .bn{white-space:normal}
+.bc .bp{font-weight:600;opacity:.6;font-size:.92em}
+.bc.big .bn{font-size:1.15em;padding-top:0}
+.hs{position:absolute;top:3%;display:flex;gap:1px}.hs b{width:5px;height:5px;background:#1f9d55;border:1px solid #fff}.hs b.h{width:10px;background:#e0343a}
+.t-chance{background:#ffe27a}.t-chest{background:#bdebf0}.t-tax{background:#ece4d6}.t-go,.t-jail,.t-park,.t-gojail{background:#ffd8c9}.t-st,.t-ut{background:#e8eef7}
+.bctr{background:#d8efe4;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5%;color:#0b3d40;text-align:center;direction:rtl}
+.blogo{font:400 clamp(32px,11vw,56px)/1 Lalezar,Cairo,sans-serif;color:#c2361f;transform:rotate(-7deg);text-shadow:3px 3px 0 #fff}
+.bsub{font-size:clamp(11px,3vw,13px);opacity:.7;margin-top:6px}
+#blog{list-style:none;margin:10px 0 0;padding:0;font-size:clamp(11px,3.1vw,14px);font-weight:600;width:100%;line-height:1.35}
+#blog li{padding:3px 0;border-bottom:1px solid #0b3d401f}
+#blog li:first-child{font-weight:800}
+#blog li:nth-child(n+4){opacity:.6}
+.bw .tok{--s:4.6%}
+/* النافذة */
+#sheet{position:fixed;inset:0;background:#0009;display:grid;place-items:end center;z-index:20;padding:12px}
+#sheet[hidden]{display:none}
+.sheetBox{background:var(--card);color:var(--ink);width:min(520px,100%);border-radius:22px;padding:18px;max-height:86vh;overflow:auto;animation:up .25s}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+#sheetBody h3{font:400 30px/1.15 Lalezar,Cairo,sans-serif;margin:0 0 6px}
+#sheetBody p{margin:6px 0}
+#sheetAct{display:grid;gap:8px;margin-top:14px}
+#sheetAct .btn{background:#eadfca}#sheetAct .btn.big{background:var(--coral);color:#fff}#sheetAct .btn.ghost{background:transparent;color:var(--ink)}
+.istrip{height:14px;border-radius:8px;margin-bottom:10px}
+.rt{width:100%;border-collapse:collapse;font-size:15px}.rt td{padding:5px 0;border-bottom:1px solid #0001}.rt td:last-child{text-align:left;font-weight:700;white-space:nowrap}
+.trophy{display:grid;place-items:center;margin-bottom:4px}
+.online{margin-top:22px;background:#00000030;border-radius:20px;padding:16px;border:2px dashed #ffffff40}
+.online h3{margin:0 0 4px;font:400 28px/1.1 Lalezar,Cairo,sans-serif;color:var(--gold)}
+.online p{margin:0 0 12px;font-size:15px;opacity:.9}
+.online input,#lobby input{font:700 17px Cairo,sans-serif;min-height:48px;border-radius:14px;border:0;padding:0 14px;background:#fff;color:var(--ink);width:100%;-webkit-user-select:text;user-select:text}
+.orow{display:flex;gap:8px;margin-top:10px}.orow input{flex:1}.orow .btn{flex:none}
+#mkRoom{width:100%}
+.code{font:400 64px/1 Lalezar,Cairo,sans-serif;letter-spacing:.12em;color:#c2361f;text-align:center;background:#fff;border-radius:16px;padding:14px 0 6px;margin:4px 0 10px;direction:ltr}
+.who{list-style:none;padding:0;margin:0 0 14px;display:grid;gap:6px}.who li{background:#eadfca;border-radius:12px;padding:8px 12px;font-weight:700}.who li small{font-weight:600;color:var(--mut)}
+#lobbyBody>p{margin:4px 0 12px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main id="home" class="screen">
+  <header class="hero">
+    <h1>ألعاب القعدة</h1>
+    <p>سلم وتعبان، لودو، وبنك الحظ. العب مع صحابك على نفس الموبايل، أو لوحدك ضد الكمبيوتر.</p>
+  </header>
+  <div class="games">
+    <button class="gcard" data-g="sl">
+      <svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" fill="#ffd9a8"/><g fill="#fff3d6"><rect width="24" height="24"/><rect x="48" width="24" height="24"/><rect x="24" y="24" width="24" height="24"/><rect x="72" y="24" width="24" height="24"/><rect y="48" width="24" height="24"/><rect x="48" y="48" width="24" height="24"/><rect x="24" y="72" width="24" height="24"/><rect x="72" y="72" width="24" height="24"/></g><g stroke="#7a4a1f" stroke-linecap="round"><path d="M12 88 L36 14M26 92 L50 18" stroke-width="4"/><path d="M17 74 L31 78M22 58 L36 62M27 42 L41 46M32 27 L46 31" stroke-width="3"/></g><path d="M80 16 C 52 30, 95 48, 66 60 S 72 84, 56 88" fill="none" stroke="#2e9e4f" stroke-width="8" stroke-linecap="round"/><circle cx="80" cy="15" r="7" fill="#2e9e4f"/><circle cx="77.5" cy="13" r="1.7" fill="#fff"/><circle cx="82.5" cy="13" r="1.7" fill="#fff"/></svg>
+      <span><b>سلم وتعبان</b><small>من ٢ لـ ٤ لاعبين · زهرة واحدة · السلم يطلّعك والتعبان ينزّلك</small></span>
+    </button>
+    <button class="gcard" data-g="ludo">
+      <svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" fill="#fff"/><rect width="38" height="38" fill="#e8423f"/><rect x="58" width="38" height="38" fill="#25a95b"/><rect x="58" y="58" width="38" height="38" fill="#f5c400"/><rect y="58" width="38" height="38" fill="#2f6fe4"/><g fill="#fff"><rect x="7" y="7" width="24" height="24" rx="4"/><rect x="65" y="7" width="24" height="24" rx="4"/><rect x="65" y="65" width="24" height="24" rx="4"/><rect x="7" y="65" width="24" height="24" rx="4"/></g><polygon points="38,38 48,48 38,58" fill="#e8423f"/><polygon points="38,38 58,38 48,48" fill="#25a95b"/><polygon points="58,38 58,58 48,48" fill="#f5c400"/><polygon points="38,58 58,58 48,48" fill="#2f6fe4"/><g stroke="#fff" stroke-width="2"><circle cx="19" cy="19" r="6" fill="#e8423f"/><circle cx="77" cy="19" r="6" fill="#25a95b"/><circle cx="77" cy="77" r="6" fill="#f5c400"/><circle cx="19" cy="77" r="6" fill="#2f6fe4"/></g></svg>
+      <span><b>لودو</b><small>من ٢ لـ ٤ لاعبين · محتاج ٦ عشان تطلع · اضرب قطع اللي قدامك</small></span>
+    </button>
+    <button class="gcard" data-g="bank">
+      <svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" fill="#d8efe4"/><g transform="rotate(-12 48 48)"><rect x="10" y="38" width="62" height="34" rx="4" fill="#25a95b"/><rect x="14" y="42" width="54" height="26" rx="2" fill="none" stroke="#bff0cf" stroke-width="2"/><circle cx="41" cy="55" r="8" fill="#bff0cf"/></g><g transform="translate(56 10)"><path d="M0 18 L16 4 L32 18 V36 H0Z" fill="#e0343a"/><rect x="12" y="22" width="9" height="14" fill="#fff8ec"/></g><circle cx="72" cy="74" r="13" fill="#ffd23f" stroke="#c99a00" stroke-width="3"/><text x="72" y="80" font-size="16" text-anchor="middle" fill="#8a6500" font-weight="800" font-family="Cairo,sans-serif">ج</text></svg>
+      <span><b>بنك الحظ</b><small>من ٢ لـ ٤ لاعبين · اشتري مدن مصر وابني بيوت وخد إيجار</small></span>
+    </button>
+  </div>
+  <section class="online" id="online">
+    <h3>العب أونلاين مع صاحبك</h3>
+    <p id="onStat">بنجهّز الاتصال…</p>
+    <input id="myName" maxlength="12" placeholder="اكتب اسمك" aria-label="اسمك">
+    <div class="orow" id="fbSet" hidden><input id="fbUrl" inputmode="url" placeholder="رابط Firebase Realtime Database" aria-label="رابط Firebase" dir="ltr"><button class="btn" id="fbSave">حفظ</button></div>
+    <div class="orow"><button class="btn big" id="mkRoom" disabled>اعمل أوضة جديدة</button></div>
+    <div class="orow"><input id="codeIn" inputmode="numeric" maxlength="4" placeholder="كود أوضة صاحبك" aria-label="كود الأوضة"><button class="btn" id="joinRoom" disabled>ادخل</button></div>
+  </section>
+  <p class="tip">عشان تفتحها زي أي تطبيق: من قائمة كروم (⋮) اختار «إضافة إلى الشاشة الرئيسية».</p>
+</main>
+
+<section id="setup" class="screen" hidden>
+  <div class="panel">
+    <h2 id="setTitle"></h2>
+    <p class="lbl">عدد اللاعبين</p>
+    <div class="seg" id="countRow"><button class="btn" data-n="2">٢</button><button class="btn" data-n="3">٣</button><button class="btn" data-n="4">٤</button></div>
+    <p class="lbl">اللاعبين (دوس على «إنسان / كمبيوتر» عشان تغيّر)</p>
+    <div id="plist"></div>
+    <p class="rules" id="rules"></p>
+    <div class="acts"><button class="btn big" id="startBtn">يلا نلعب</button><button class="btn ghost" id="backHome">رجوع</button></div>
+  </div>
+</section>
+
+<section id="lobby" class="screen" hidden>
+  <div class="panel"><div id="lobbyBody"></div><div class="acts"><button class="btn big" id="goOnline" hidden>ابدأ اللعبة</button><button class="btn ghost" id="leaveLobby">اخرج من الأوضة</button></div></div>
+</section>
+
+<section id="game" class="screen" hidden>
+  <div class="top"><button id="exitBtn" class="icon">خروج</button><h2 id="gTitle"></h2><button id="scoreBtn" class="icon" hidden>احسب الفايز</button></div>
+  <div id="pbar"></div>
+  <div id="board"></div>
+  <div class="ctrl"><div id="dice"></div><p id="msg"></p><div id="act"></div></div>
+</section>
+
+<div id="sheet" hidden><div class="sheetBox" role="dialog" aria-modal="true"><div id="sheetBody"></div><div id="sheetAct"></div></div></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ar=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const m=n=>ar(n)+' ج';
+const COLORS=[{n:'أحمر',c:'#e8423f'},{n:'أخضر',c:'#25a95b'},{n:'أصفر',c:'#e9b800'},{n:'أزرق',c:'#2f6fe4'}];
+const NAMES={sl:'سلم وتعبان',ludo:'لودو',bank:'بنك الحظ'};
+const RULES={
+ sl:'كل واحد يرمي الزهر ويمشي. لو وقفت تحت سلم تطلع، ولو على راس تعبان تنزل. اللي يجيب ٦ يلعب تاني، ولازم توصل ١٠٠ بالظبط وإلا ترجع بالباقي.',
+ ludo:'لازم ٦ عشان تطلّع قطعة. لو وقفت على قطعة غيرك ترجّعها البيت (إلا في خانات النجمة والبداية). الـ٦ والضربة والوصول بيدّوك دور زيادة. أول واحد يدخّل الأربع قطع يكسب.',
+ bank:'كل لاعب معاه ١٥٠٠ ج. اشتري الأراضي، ولما تجمع اللون كله تقدر تبني بيوت لحد الفندق. كل ما تعدّي البداية تقبض ٢٠٠. اللي يفلس يخرج، وتقدر تدوس «احسب الفايز» في أي وقت.'};
+const OFF=[[-1,-1],[1,-1],[-1,1],[1,1]];
+let run=0,game=null,players=[],turn=0,count=2,setupGame='sl',gameNo=0,curMsg=['','#fff'],lastDice={v:[1],n:0},W=null;
+const S={act:null};
+const cfg=[{ai:false},{ai:true},{ai:true},{ai:true}];
+const alive=my=>my===run;
+const seats=(g,n)=>g==='ludo'&&n===2?[0,2]:[0,1,2,3].slice(0,n);
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);scrollTo(0,0)}
+function openSetup(g){setupGame=g;$('#setTitle').textContent=NAMES[g];$('#rules').textContent=RULES[g];renderSetup();show('setup')}
+function renderSetup(){
+  document.querySelectorAll('#countRow .btn').forEach(b=>b.classList.toggle('on',+b.dataset.n===count));
+  $('#plist').innerHTML=seats(setupGame,count).map((s,i)=>`<div class="prow"><span class="dot" style="--c:${COLORS[s].c}"></span><input data-i="${i}" value="${esc(cfg[i].name||COLORS[s].n)}" maxlength="12" aria-label="اسم اللاعب ${ar(i+1)}"><button class="tog${cfg[i].ai?' ai':''}" data-i="${i}">${cfg[i].ai?'كمبيوتر':'إنسان'}</button></div>`).join('');
+}
+document.querySelectorAll('.gcard').forEach(b=>b.onclick=()=>openSetup(b.dataset.g));
+$('#countRow').onclick=e=>{const b=e.target.closest('[data-n]');if(b){count=+b.dataset.n;renderSetup()}};
+$('#plist').addEventListener('input',e=>{if(e.target.dataset.i)cfg[+e.target.dataset.i].name=e.target.value});
+$('#plist').addEventListener('click',e=>{const b=e.target.closest('.tog');if(b){const c=cfg[+b.dataset.i];c.ai=!c.ai;renderSetup()}});
+$('#backHome').onclick=()=>show('home');
+$('#startBtn').onclick=()=>{
+  players=seats(setupGame,count).map((s,i)=>{const nm=(cfg[i].name||'').trim();return{name:nm||COLORS[s].n,color:COLORS[s].c,ai:cfg[i].ai,seat:s,idx:i}});
+  start(setupGame);
+};
+function start(g){
+  run++;game=g;turn=0;gameNo++;W=null;S.act=null;if(NET.on){NET.pend={}}
+  $('#gTitle').textContent=NAMES[g];$('#scoreBtn').hidden=g!=='bank';$('#sheet').hidden=true;
+  $('#act').innerHTML='';$('#msg').textContent='';$('#board').onclick=null;
+  show('game');({sl:SL,ludo:LU,bank:BK})[g].start(run);
+}
+
+function setMsg(t,p){const e=$('#msg');e.textContent=t;const c=p?p.color:'#fff';e.style.setProperty('--c',c);curMsg=[t,c]}
+function face(v){const P={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};return '<i class="die">'+Array.from({length:9},(_,i)=>`<b${P[v].includes(i)?' class="on"':''}></b>`).join('')+'</i>'}
+async function roll(n){
+  const box=$('#dice');let v=[];box.classList.remove('pop');
+  for(let k=0;k<9;k++){v=Array.from({length:n},()=>1+Math.floor(Math.random()*6));box.innerHTML=v.map(face).join('');await sleep(50)}
+  lastDice={v,n:lastDice.n+1};
+  void box.offsetWidth;box.classList.add('pop');
+  try{navigator.vibrate&&navigator.vibrate(25)}catch(e){}
+  return v;
+}
+function ask(opts,p){
+  if(NET.on&&NET.role==='host'&&p&&!p.ai&&p.ctl&&p.ctl!=='host')return NET.remoteAsk(opts,p);
+  const a=$('#act');a.innerHTML='';
+  return new Promise(res=>{opts.forEach(o=>{const b=document.createElement('button');b.className='btn '+(o.cls||'');b.textContent=o.t;b.disabled=!!o.dis;b.onclick=()=>{a.innerHTML='';res(o.v)};a.appendChild(b)})});
+}
+async function rollStep(p,my,n){
+  if(p.ai){$('#act').innerHTML='<span class="wait">الكمبيوتر بيلعب…</span>';await sleep(700)}
+  else await ask([{t:'ارمي الزهر',v:1,cls:'big'}],p);
+  if(!alive(my))return null;$('#act').innerHTML='';return roll(n);
+}
+function bar(extra){$('#pbar').innerHTML=players.map((p,i)=>`<div class="chip${i===turn?' on':''}${p.out?' out':''}" style="--c:${p.color}"><i></i><b>${esc(p.name)}</b><small>${extra(p,i)}</small></div>`).join('')}
+function sheet(html,opts){
+  $('#sheetBody').innerHTML=html;const a=$('#sheetAct');a.innerHTML='';$('#sheet').hidden=false;
+  return new Promise(res=>{opts.forEach(o=>{const b=document.createElement('button');b.className='btn '+(o.cls||'');b.textContent=o.t;b.onclick=()=>{$('#sheet').hidden=true;res(o.v)};a.appendChild(b)})});
+}
+const TROPHY='<div class="trophy"><svg viewBox="0 0 64 64" width="84" height="84" aria-hidden="true"><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="#ffd23f"/><path d="M18 12H9v4a10 10 0 0 0 10 10M46 12h9v4a10 10 0 0 1-10 10" fill="none" stroke="#e0a800" stroke-width="4"/><rect x="28" y="34" width="8" height="11" fill="#e0a800"/><rect x="18" y="45" width="28" height="9" rx="2" fill="#c2361f"/><path d="M25 14l3 6" stroke="#fff8" stroke-width="3" stroke-linecap="round"/></svg></div>';
+function winHtml(p,info={},mine){
+  let ex='';
+  if(info.note==='bk')ex+='<p style="text-align:center">كل الباقيين أفلسوا.</p>';
+  if(Array.isArray(info.rk))ex+=`<table class="rt">${info.rk.map(([i,w],k)=>{const q=players[i];return q?`<tr><td><span style="color:${q.color}">●</span> ${ar(k+1)}. ${esc(q.name)}</td><td>${m(w)}</td></tr>`:''}).join('')}</table>`;
+  const line=mine===true?'كسبت الدور ده بجدارة.':mine===false?'المرة الجاية بتاعتك.':(p.ai?'الكمبيوتر كسب المرة دي… خدها تار المرة الجاية.':'كسبت الدور ده بجدارة.');
+  return `${TROPHY}<h3 style="color:${p.color};text-align:center">${mine===true?'مبروك! انت كسبت':'مبروك يا '+esc(p.name)+'!'}</h3><p style="text-align:center">${line}</p>${ex}`;
+}
+async function win(p,my,info={}){
+  if(my!==undefined&&!alive(my))return;
+  run++;W={i:p.idx,rk:info.rk||null,note:info.note||null};S.act=null;
+  const v=await sheet(winHtml(p,info),[{t:'العب تاني',v:'again',cls:'big'},{t:NET.on?'اقفل الأوضة':'القائمة الرئيسية',v:'home',cls:'ghost'}]);
+  if(v==='again')start(game);else if(NET.on)NET.leave();else show('home');
+}
+$('#exitBtn').onclick=async()=>{const v=await sheet(`<h3>تخرج من اللعبة؟</h3><p>${NET.on?(NET.role==='host'?'الأوضة هتتقفل وصاحبك هيخرج كمان.':'هتخرج من أوضة صاحبك.'):'الدور الحالي هيتلغي.'}</p>`,[{t:'أيوه، اخرج',v:1,cls:'big'},{t:'لأ، كمّل',v:0,cls:'ghost'}]);if(v){run++;if(NET.on)NET.leave();else show('home')}};
+
+/* ========== سلم وتعبان ========== */
+const SL={
+  snakes:{17:7,49:11,54:34,62:19,64:60,87:24,93:73,95:75,98:79},
+  ladders:{2:38,4:14,9:31,21:42,28:84,36:44,51:67,71:91,80:100},
+  xy(n){const r=Math.floor((n-1)/10),c=r%2?9-(n-1)%10:(n-1)%10;return[(c+.5)*10,(9-r+.5)*10]},
+  start(my){players.forEach(p=>p.pos=1);this.draw();this.place();$('#dice').innerHTML=face(1);this.loop(my)},
+  draw(){
+    let cells='';
+    for(let vr=0;vr<10;vr++){const r=9-vr;for(let c=0;c<10;c++){const n=r%2?r*10+10-c:r*10+c+1;cells+=`<div class="slc c${(vr+c)%2+(Math.floor(vr/2)%2)*2}"><span>${ar(n)}</span></div>`}}
+    let svg='';
+    for(const[a,b]of Object.entries(this.ladders)){
+      const[x1,y1]=this.xy(+a),[x2,y2]=this.xy(b),dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),px=-dy/L*2.1,py=dx/L*2.1,k=Math.floor(L/4.2);
+      let r='';for(let i=1;i<=k;i++){const t=i/(k+1),x=x1+dx*t,y=y1+dy*t;r+=`M${(x+px).toFixed(2)} ${(y+py).toFixed(2)}L${(x-px).toFixed(2)} ${(y-py).toFixed(2)}`}
+      svg+=`<g stroke-linecap="round"><path d="${r}" stroke="#a8743f" stroke-width=".9"/><path d="M${x1+px} ${y1+py}L${x2+px} ${y2+py}M${x1-px} ${y1-py}L${x2-px} ${y2-py}" stroke="#6e4219" stroke-width="1.3"/><path d="M${x1+px} ${y1+py}L${x2+px} ${y2+py}" stroke="#d9a66b" stroke-width=".4"/></g>`;
+    }
+    const SC=['#2e9e4f','#d9462c','#7b3fb0','#e08a12','#1f7fb8'];let k=0;
+    for(const[a,b]of Object.entries(this.snakes)){
+      const[x1,y1]=this.xy(+a),[x2,y2]=this.xy(b),dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),px=-dy/L,py=dx/L,amp=Math.min(3.2,L/7),w=Math.max(1.5,L/16),col=SC[k++%SC.length];
+      let d='';for(let i=0;i<=44;i++){const t=i/44,o=Math.sin(t*Math.PI*2*w)*amp*(1-t*.6);d+=(i?'L':'M')+(x1+dx*t+px*o).toFixed(2)+' '+(y1+dy*t+py*o).toFixed(2)}
+      const ex=dx/L,ey=dy/L;
+      svg+=`<g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="${d}" stroke="#0003" stroke-width="3.6" transform="translate(.5 .7)"/><path d="${d}" stroke="${col}" stroke-width="3.2"/><path d="${d}" stroke="#fff7" stroke-width=".9" stroke-dasharray="1.2 2.4"/></g><path d="M${x1-ex*2.2} ${y1-ey*2.2}l${-ex*1.6+px*.5} ${-ey*1.6+py*.5}M${x1-ex*2.2} ${y1-ey*2.2}l${-ex*1.6-px*.5} ${-ey*1.6-py*.5}" stroke="#d01f2f" stroke-width=".45" stroke-linecap="round"/><circle cx="${x1}" cy="${y1}" r="2.7" fill="${col}" stroke="#0003" stroke-width=".4"/><circle cx="${x1+px*1.1-ex*.6}" cy="${y1+py*1.1-ey*.6}" r=".75" fill="#fff"/><circle cx="${x1-px*1.1-ex*.6}" cy="${y1-py*1.1-ey*.6}" r=".75" fill="#fff"/><circle cx="${x1+px*1.1-ex*.8}" cy="${y1+py*1.1-ey*.8}" r=".35" fill="#111"/><circle cx="${x1-px*1.1-ex*.8}" cy="${y1-py*1.1-ey*.8}" r=".35" fill="#111"/>`;
+    }
+    $('#board').innerHTML=`<div class="sl" id="slb"><div class="slg">${cells}</div><svg viewBox="0 0 100 100" aria-hidden="true">${svg}</svg>${players.map((p,i)=>`<div class="tok" id="st${i}" style="--c:${p.color}"></div>`).join('')}</div>`;
+  },
+  bar(){bar(q=>'خانة '+ar(q.pos))},
+  place(){
+    const gr={};players.forEach((p,i)=>(gr[p.pos]=gr[p.pos]||[]).push(i));
+    for(const[pos,ids]of Object.entries(gr)){const[x,y]=this.xy(+pos);ids.forEach((i,k)=>{const o=ids.length>1?OFF[k]:[0,0],e=$('#st'+i);e.style.left=(x+o[0]*2.3)+'%';e.style.top=(y+o[1]*2.3)+'%'})}
+  },
+  async loop(my){
+    while(alive(my)){
+      const p=players[turn];this.bar();setMsg('دور '+p.name,p);
+      const v=await rollStep(p,my,1);if(!v||!alive(my))return;const d=v[0];
+      const over=p.pos+d>100;let dir=1;
+      for(let s=0;s<d;s++){if(p.pos===100)dir=-1;p.pos+=dir;this.place();await sleep(180);if(!alive(my))return}
+      if(over)setMsg(`${p.name} عدّى الـ١٠٠ ورجع لـ ${ar(p.pos)}`,p);
+      const ld=this.ladders[p.pos],sn=this.snakes[p.pos],b=$('#slb');
+      if(ld||sn){
+        setMsg(ld?`${p.name} لقى سلم! طلع لـ ${ar(ld)}`:`التعبان قرص ${p.name}! نزل لـ ${ar(sn)}`,p);
+        await sleep(350);b.classList.add('slide');p.pos=ld||sn;this.place();await sleep(750);b.classList.remove('slide');if(!alive(my))return;
+      }
+      this.bar();
+      if(p.pos===100)return win(p,my);
+      if(d===6){setMsg(`جات ٦! ${p.name} يلعب تاني`,p);await sleep(800)}
+      else{await sleep(over||ld||sn?700:250);turn=(turn+1)%players.length}
+    }
+  }
+};
+
+/* ========== لودو ========== */
+const TRACK=[[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0],[6,0]];
+const START=[0,13,26,39],SAFE=new Set([0,8,13,21,26,34,39,47]);
+const HOME=[[[7,1],[7,2],[7,3],[7,4],[7,5]],[[1,7],[2,7],[3,7],[4,7],[5,7]],[[7,13],[7,12],[7,11],[7,10],[7,9]],[[13,7],[12,7],[11,7],[10,7],[9,7]]];
+const BASES=[[0,0],[0,9],[9,9],[9,0]],FIN=[[7.5,6.6],[6.6,7.5],[7.5,8.4],[8.4,7.5]];
+const LU={
+  start(my){this.tk={};this.pickRes=null;players.forEach(p=>this.tk[p.seat]=[-1,-1,-1,-1]);this.draw();this.place();$('#dice').innerHTML=face(1);this.loop(my)},
+  draw(){
+    let h='';
+    BASES.forEach(([r,c],s)=>h+=`<div class="lbase" style="grid-area:${r+1}/${c+1}/span 6/span 6;--c:${COLORS[s].c}"><div class="lin"><i></i><i></i><i></i><i></i></div></div>`);
+    TRACK.forEach(([r,c],i)=>{const st=START.indexOf(i);h+=`<div class="lc" style="grid-area:${r+1}/${c+1};${st>=0?'background:'+COLORS[st].c+';color:#fffc':''}">${SAFE.has(i)?'★':''}</div>`});
+    HOME.forEach((col,s)=>col.forEach(([r,c])=>h+=`<div class="lc" style="grid-area:${r+1}/${c+1};background:${COLORS[s].c}"></div>`));
+    h+=`<svg class="lctr" style="grid-area:7/7/span 3/span 3" viewBox="0 0 30 30" aria-hidden="true"><polygon points="0,0 15,15 0,30" fill="${COLORS[0].c}"/><polygon points="0,0 30,0 15,15" fill="${COLORS[1].c}"/><polygon points="30,0 30,30 15,15" fill="${COLORS[2].c}"/><polygon points="0,30 30,30 15,15" fill="${COLORS[3].c}"/></svg>`;
+    let t='';players.forEach(p=>[0,1,2,3].forEach(k=>t+=`<div class="tok" id="lt${p.seat}${k}" style="--c:${p.color}"></div>`));
+    $('#board').innerHTML=`<div class="lw" id="lwb"><div class="lg">${h}</div>${t}</div>`;
+    $('#board').onclick=e=>this.tap(e);
+  },
+  coord(s,t){
+    const pr=this.tk[s][t];
+    if(pr<0){const[r,c]=BASES[s];return[r+2+(t>>1)*2,c+2+(t&1)*2]}
+    if(pr<=50){const[r,c]=TRACK[(START[s]+pr)%52];return[r+.5,c+.5]}
+    if(pr<=55){const[r,c]=HOME[s][pr-51];return[r+.5,c+.5]}
+    return FIN[s];
+  },
+  place(){
+    const gr={};
+    players.forEach(p=>[0,1,2,3].forEach(t=>{const k=this.coord(p.seat,t).join();(gr[k]=gr[k]||[]).push([p.seat,t])}));
+    for(const[k,list]of Object.entries(gr)){const[y,x]=k.split(',').map(Number);list.forEach(([s,t],i)=>{const e=$('#lt'+s+t),many=list.length>1,o=many?OFF[i%4]:[0,0];e.classList.toggle('sm',many);e.style.left=((x+o[0]*.24)/15*100)+'%';e.style.top=((y+o[1]*.24)/15*100)+'%'})}
+  },
+  abs(s,pr){return(START[s]+pr)%52},
+  can(s,t,d){const pr=this.tk[s][t];return pr<0?d===6:pr+d<=56},
+  foesAt(s,a){let n=0;for(const p of players)if(p.seat!==s)this.tk[p.seat].forEach(x=>{if(x>=0&&x<=50&&this.abs(p.seat,x)===a)n++});return n},
+  threat(s,a){for(const p of players){if(p.seat===s)continue;for(const x of this.tk[p.seat]){if(x<0||x>50)continue;const dist=(a-this.abs(p.seat,x)+52)%52;if(dist>=1&&dist<=6&&x+dist<=50)return true}}return false},
+  best(s,d,mov){
+    let bt=mov[0],bs=-1e9;
+    for(const t of mov){
+      const cur=this.tk[s][t],nw=cur<0?0:cur+d;let sc=nw*.5;
+      if(cur<0)sc+=45;
+      if(nw===56)sc+=70;
+      if(nw>50&&cur<=50)sc+=30;
+      if(nw<=50){const a=this.abs(s,nw);if(!SAFE.has(a)&&this.foesAt(s,a))sc+=100;if(SAFE.has(a))sc+=15;else if(this.threat(s,a))sc-=30}
+      if(cur>=0&&cur<=50){const a=this.abs(s,cur);if(!SAFE.has(a)&&this.threat(s,a))sc+=22}
+      sc+=Math.random()*3;
+      if(sc>bs){bs=sc;bt=t}
+    }
+    return bt;
+  },
+  pick(s,mov,p){
+    if(NET.on&&NET.role==='host'&&p&&p.ctl&&p.ctl!=='host')return NET.remotePick(s,mov,p);
+    this.ps=s;this.cand=mov;
+    mov.forEach(t=>$('#lt'+s+t).classList.add('can'));
+    $('#act').innerHTML='<span class="wait">دوس على القطعة اللي بتتنطط</span>';
+    return new Promise(r=>this.pickRes=r);
+  },
+  tap(e){
+    if(!this.pickRes)return;
+    const w=$('#lwb').getBoundingClientRect(),x=(e.clientX-w.left)/w.width*15,y=(e.clientY-w.top)/w.height*15;
+    let best=null,bd=2.3;
+    for(const t of this.cand){const[cy,cx]=this.coord(this.ps,t),d=Math.hypot(cx-x,cy-y);if(d<bd){bd=d;best=t}}
+    if(best===null)return;
+    const r=this.pickRes;this.pickRes=null;document.querySelectorAll('.tok.can').forEach(q=>q.classList.remove('can'));$('#act').innerHTML='';r(best);
+  },
+  async move(s,t,d,my){
+    const tk=this.tk[s];
+    if(tk[t]<0){tk[t]=0;this.place();await sleep(260)}
+    else for(let i=0;i<d;i++){tk[t]++;this.place();await sleep(170);if(!alive(my))return false}
+    if(tk[t]===56)return 'home';
+    if(tk[t]<=50){
+      const a=this.abs(s,tk[t]);
+      if(!SAFE.has(a)){let cap=0;for(const p of players){if(p.seat===s)continue;this.tk[p.seat].forEach((x,j)=>{if(x>=0&&x<=50&&this.abs(p.seat,x)===a){this.tk[p.seat][j]=-1;cap++}})}if(cap){this.place();return 'cap'}}
+    }
+    return false;
+  },
+  bar(){bar(q=>'وصّل '+ar(this.tk[q.seat].filter(x=>x===56).length)+'/٤')},
+  async loop(my){
+    let sixes=0;
+    while(alive(my)){
+      const p=players[turn],s=p.seat;this.bar();setMsg('دور '+p.name,p);
+      const v=await rollStep(p,my,1);if(!v||!alive(my))return;const d=v[0];
+      if(d===6)sixes++;else sixes=0;
+      let extra=false;
+      if(sixes===3){setMsg('٣ ستات ورا بعض! الدور راح عليك',p);sixes=0;await sleep(1100)}
+      else{
+        const mov=[0,1,2,3].filter(t=>this.can(s,t,d));
+        if(!mov.length){setMsg(`${p.name} جاب ${ar(d)}… مفيش حركة`,p);await sleep(950)}
+        else{
+          let t;
+          if(new Set(mov.map(k=>this.tk[s][k])).size===1){t=mov[0];await sleep(280)}
+          else if(p.ai){await sleep(450);t=this.best(s,d,mov)}
+          else{setMsg(`${p.name}: اختار القطعة اللي هتمشي ${ar(d)}`,p);t=await this.pick(s,mov,p)}
+          if(!alive(my))return;
+          const r=await this.move(s,t,d,my);if(!alive(my))return;
+          this.bar();
+          if(this.tk[s].every(x=>x===56))return win(p,my);
+          if(r==='cap'){setMsg(`ضربة! ${p.name} رجّع قطعة للبيت`,p);extra=true;await sleep(800)}
+          if(r==='home'){setMsg(`قطعة لـ${p.name} وصلت البيت!`,p);extra=true;await sleep(800)}
+        }
+        if(d===6)extra=true;
+      }
+      if(extra){setMsg(`${p.name} يلعب تاني`,p);await sleep(450)}
+      else{sixes=0;turn=(turn+1)%players.length}
+    }
+  }
+};
+
+/* ========== بنك الحظ ========== */
+const GR=[{c:'#8b5a2b',h:50},{c:'#6cc4ee',h:50},{c:'#d6489b',h:100},{c:'#f08a24',h:100},{c:'#e0343a',h:150},{c:'#f2cf2f',h:150},{c:'#1f9d55',h:200},{c:'#2346b8',h:200}];
+const MULT=[1,4,12,30,40,50];
+const SQ=[
+ {t:'go',n:'البداية',s:'ابدأ ←'},{t:'p',n:'أسوان',g:0,p:60,r:2},{t:'chest',n:'مفاجأة'},{t:'p',n:'الأقصر',g:0,p:60,r:4},{t:'tax',n:'ضريبة الدخل',s:'ضريبة',a:200},
+ {t:'st',n:'محطة رمسيس',s:'رمسيس',p:200},{t:'p',n:'المنيا',g:1,p:100,r:6},{t:'chance',n:'حظ'},{t:'p',n:'أسيوط',g:1,p:100,r:6},{t:'p',n:'سوهاج',g:1,p:120,r:8},
+ {t:'jail',n:'السجن'},{t:'p',n:'الفيوم',g:2,p:140,r:10},{t:'ut',n:'شركة الكهرباء',s:'كهرباء',p:150},{t:'p',n:'بني سويف',g:2,p:140,r:10},{t:'p',n:'الإسماعيلية',s:'إسماعيلية',g:2,p:160,r:12},
+ {t:'st',n:'محطة سيدي جابر',s:'سيدي جابر',p:200},{t:'p',n:'السويس',g:3,p:180,r:14},{t:'chest',n:'مفاجأة'},{t:'p',n:'بورسعيد',g:3,p:180,r:14},{t:'p',n:'دمياط',g:3,p:200,r:16},
+ {t:'park',n:'استراحة',s:'راحة'},{t:'p',n:'طنطا',g:4,p:220,r:18},{t:'chance',n:'حظ'},{t:'p',n:'المنصورة',s:'منصورة',g:4,p:220,r:18},{t:'p',n:'الزقازيق',s:'زقازيق',g:4,p:240,r:20},
+ {t:'st',n:'مطار القاهرة',s:'المطار',p:200},{t:'p',n:'مرسى مطروح',s:'مطروح',g:5,p:260,r:22},{t:'p',n:'الغردقة',s:'غردقة',g:5,p:260,r:22},{t:'ut',n:'شركة المياه',s:'المياه',p:150},{t:'p',n:'شرم الشيخ',s:'شرم',g:5,p:280,r:24},
+ {t:'gojail',n:'روح السجن',s:'للسجن'},{t:'p',n:'الإسكندرية',s:'إسكندرية',g:6,p:300,r:26},{t:'p',n:'الجيزة',g:6,p:300,r:26},{t:'chest',n:'مفاجأة'},{t:'p',n:'مدينة نصر',s:'م. نصر',g:6,p:320,r:28},
+ {t:'st',n:'ميناء الإسكندرية',s:'الميناء',p:200},{t:'chance',n:'حظ'},{t:'p',n:'الزمالك',g:7,p:350,r:35},{t:'tax',n:'ضريبة رفاهية',s:'رفاهية',a:100},{t:'p',n:'التجمع الخامس',s:'التجمع',g:7,p:400,r:50}];
+const STATIONS=[5,15,25,35],UTILS=[12,28];
+const BK={
+  start(my){
+    this.own=Array(40).fill(-1);this.hs=Array(40).fill(0);this.lg=[];
+    players.forEach(p=>Object.assign(p,{cash:1500,pos:0,jail:0,jt:0,out:false}));
+    this.draw();this.ui();$('#dice').innerHTML=face(1)+face(1);
+    this.log('كل لاعب معاه ١٥٠٠ ج. بالتوفيق!');this.loop(my);
+  },
+  gp(i){if(i===0)return[10,10];if(i<10)return[10,10-i];if(i===10)return[10,0];if(i<20)return[20-i,0];if(i===20)return[0,0];if(i<30)return[0,i-20];if(i===30)return[0,10];return[i-30,10]},
+  draw(){
+    let h=SQ.map((q,i)=>{const[r,c]=this.gp(i),g=q.g!=null?GR[q.g].c:null,big=!q.p&&q.t!=='tax',lab=q.s||q.n;return`<button class="bc t-${q.t}${big?' big':''}${!big&&lab.length>6?' long':''}" id="bc${i}" data-i="${i}" style="grid-area:${r+1}/${c+1}" aria-label="${q.n}">${g?`<i class="strip" style="background:${g}"></i>`:''}<span class="bn">${q.s||q.n}</span>${q.p?`<span class="bp">${ar(q.p)}</span>`:''}<span class="hs"></span></button>`}).join('');
+    h+=`<div class="bctr" style="grid-area:2/2/span 9/span 9"><div class="blogo">بنك الحظ</div><div class="bsub">دوس على أي خانة تشوف تفاصيلها</div><ul id="blog"></ul></div>`;
+    $('#board').innerHTML=`<div class="bw"><div class="bgr">${h}</div>${players.map((p,i)=>`<div class="tok" id="bt${i}" style="--c:${p.color}"></div>`).join('')}</div>`;
+    $('#board').onclick=e=>{const b=e.target.closest('.bc');if(b&&$('#sheet').hidden)this.info(+b.dataset.i)};
+  },
+  ui(){
+    bar(p=>p.out?'أفلس':m(p.cash)+(p.jail?' · مسجون':''));
+    SQ.forEach((q,i)=>{if(!q.p)return;const e=$('#bc'+i),o=this.own[i],h=this.hs[i];e.style.setProperty('--o',o<0?'transparent':players[o].color);e.querySelector('.hs').innerHTML=h===5?'<b class="h"></b>':'<b></b>'.repeat(h)});
+    this.place();
+  },
+  place(){
+    const gr={};players.forEach((p,i)=>{$('#bt'+i).style.display=p.out?'none':'';if(!p.out)(gr[p.pos]=gr[p.pos]||[]).push(i)});
+    for(const[pos,ids]of Object.entries(gr)){const[r,c]=this.gp(+pos);ids.forEach((i,k)=>{const o=ids.length>1?OFF[k]:[0,0],e=$('#bt'+i);e.style.left=((c+.5)/11*100+o[0]*1.9)+'%';e.style.top=((r+.5)/11*100+o[1]*1.9+1.6)+'%'})}
+  },
+  log(t){this.lg.unshift(t);this.lg=this.lg.slice(0,5);this.logR()},
+  logR(){const e=$('#blog');if(e)e.innerHTML=this.lg.map(x=>`<li>${esc(x)}</li>`).join('')},
+  group(g){return SQ.map((q,i)=>q.g===g?i:-1).filter(i=>i>=0)},
+  full(g,o){return this.group(g).every(i=>this.own[i]===o)},
+  rent(i,sum){
+    const q=SQ[i],o=this.own[i];
+    if(q.t==='st')return 25*2**(STATIONS.filter(j=>this.own[j]===o).length-1);
+    if(q.t==='ut')return sum*(UTILS.every(j=>this.own[j]===o)?10:4);
+    const h=this.hs[i];return h?q.r*MULT[h]:(this.full(q.g,o)?q.r*2:q.r);
+  },
+  worth(p){let w=p.cash;this.own.forEach((o,i)=>{if(o===p.idx)w+=SQ[i].p+(SQ[i].g!=null?this.hs[i]*GR[SQ[i].g].h:0)});return w},
+  raise(p,amt){
+    while(p.cash<amt){
+      const wh=this.own.map((o,i)=>o===p.idx&&this.hs[i]>0?i:-1).filter(i=>i>=0);
+      if(wh.length){const i=wh.sort((a,b)=>this.hs[b]-this.hs[a])[0];this.hs[i]--;p.cash+=GR[SQ[i].g].h/2;this.log(`${p.name} باع بيت في ${SQ[i].n}`);continue}
+      const pr=this.own.map((o,i)=>o===p.idx?i:-1).filter(i=>i>=0);
+      if(!pr.length)break;
+      const i=pr.sort((a,b)=>SQ[a].p-SQ[b].p)[0];this.own[i]=-1;p.cash+=SQ[i].p/2;this.log(`${p.name} باع ${SQ[i].n} للبنك بنص التمن`);
+    }
+  },
+  async pay(p,to,amt){
+    if(p.out)return;
+    if(p.cash<amt)this.raise(p,amt);
+    if(p.cash<amt){
+      if(to)to.cash+=p.cash;p.cash=0;p.out=true;
+      this.own.forEach((o,i)=>{if(o===p.idx){this.own[i]=-1;this.hs[i]=0}});
+      this.log(`${p.name} أفلس وخرج من اللعبة`);setMsg(`${p.name} أفلس!`,p);this.ui();await sleep(1300);return;
+    }
+    p.cash-=amt;if(to)to.cash+=amt;this.ui();
+  },
+  async walk(p,n,my){
+    const dl=Math.min(150,2400/Math.max(n,1));
+    for(let k=0;k<n;k++){p.pos=(p.pos+1)%40;if(p.pos===0){p.cash+=200;this.log(`${p.name} عدّى البداية وقبض ٢٠٠`);this.ui()}this.place();await sleep(dl);if(!alive(my))return}
+  },
+  walkTo(p,t,my){return this.walk(p,(t-p.pos+40)%40,my)},
+  async toJail(p){p.pos=10;p.jail=1;p.jt=0;this.log(`${p.name} راح السجن`);setMsg(`${p.name} راح السجن!`,p);this.ui();await sleep(900)},
+  cards:{
+    chance:[
+      {t:'اتقدّم لحد البداية واقبض ٢٠٠',f:(p,s,my)=>BK.walkTo(p,0,my)},
+      {t:'اتقدّم للإسكندرية',f:async(p,s,my)=>{await BK.walkTo(p,31,my);await BK.land(p,s,my)}},
+      {t:'اتقدّم لأقرب محطة',f:async(p,s,my)=>{const t=STATIONS.find(j=>j>p.pos)??5;await BK.walkTo(p,t,my);await BK.land(p,s,my)}},
+      {t:'ارجع ٣ خانات',f:async(p,s,my)=>{p.pos=(p.pos+37)%40;BK.place();await sleep(450);await BK.land(p,s,my)}},
+      {t:'كسبت مسابقة: خد ١٥٠',f:p=>{p.cash+=150}},
+      {t:'البنك صرفلك أرباح ٥٠',f:p=>{p.cash+=50}},
+      {t:'مخالفة سرعة: ادفع ٣٠',f:p=>BK.pay(p,null,30)},
+      {t:'صيانة عقاراتك: ٢٥ عن كل بيت و١٠٠ عن كل فندق',f:p=>{let a=0;BK.own.forEach((o,i)=>{if(o===p.idx)a+=BK.hs[i]===5?100:BK.hs[i]*25});return a?BK.pay(p,null,a):null}},
+      {t:'اتمسكت! روح السجن على طول',f:p=>BK.toJail(p)}],
+    chest:[
+      {t:'عيد ميلادك! كل لاعب يديلك ٢٠',f:async p=>{for(const q of players)if(q!==p&&!q.out)await BK.pay(q,p,20)}},
+      {t:'كشف دكتور: ادفع ٥٠',f:p=>BK.pay(p,null,50)},
+      {t:'ورثت ١٠٠ من قريب بعيد',f:p=>{p.cash+=100}},
+      {t:'استرداد ضرايب: خد ٢٠',f:p=>{p.cash+=20}},
+      {t:'غلطة في البنك لصالحك: خد ٢٠٠',f:p=>{p.cash+=200}},
+      {t:'مصاريف مدارس: ادفع ١٠٠',f:p=>BK.pay(p,null,100)},
+      {t:'بعت عفش قديم: خد ٥٠',f:p=>{p.cash+=50}},
+      {t:'اتقدّم لحد البداية واقبض ٢٠٠',f:(p,s,my)=>BK.walkTo(p,0,my)},
+      {t:'روح السجن',f:p=>BK.toJail(p)}]
+  },
+  async land(p,sum,my){
+    if(!alive(my)||p.out)return;
+    const i=p.pos,q=SQ[i];
+    if(q.p){
+      const o=this.own[i];
+      if(o<0){
+        if(p.cash>=q.p){
+          let buy;
+          if(p.ai){await sleep(500);buy=p.cash-q.p>=120}
+          else{setMsg(`${q.n} للبيع بـ ${m(q.p)}. تشتريها؟`,p);buy=await ask([{t:'اشتري بـ '+m(q.p),v:true,cls:'big'},{t:'سيبها',v:false,cls:'ghost'}],p)}
+          if(!alive(my))return;
+          if(buy){p.cash-=q.p;this.own[i]=p.idx;this.log(`${p.name} اشترى ${q.n}`);setMsg(`${p.name} اشترى ${q.n}`,p)}
+          else this.log(`${p.name} ساب ${q.n}`);
+        }else{this.log(`${p.name} مش معاه تمن ${q.n}`);setMsg(`${p.name} مش معاه تمن ${q.n}`,p)}
+      }else if(o!==p.idx){
+        const ow=players[o],r=this.rent(i,sum);
+        setMsg(`${p.name} دفع إيجار ${m(r)} لـ ${ow.name}`,p);this.log(`${p.name} دفع ${m(r)} إيجار ${q.n} لـ ${ow.name}`);
+        await this.pay(p,ow,r);await sleep(800);
+      }else setMsg(`${q.n} بتاعتك يا ${p.name}`,p);
+    }
+    else if(q.t==='tax'){setMsg(`${p.name} دفع ${q.n} ${m(q.a)}`,p);this.log(`${p.name} دفع ${q.n} ${m(q.a)}`);await this.pay(p,null,q.a);await sleep(600)}
+    else if(q.t==='chance'||q.t==='chest'){
+      const d=this.cards[q.t],c=d[Math.floor(Math.random()*d.length)];
+      setMsg(`${q.n}: ${c.t}`,p);this.log(`${p.name} — ${q.n}: ${c.t}`);await sleep(1300);
+      if(!alive(my))return;await c.f(p,sum,my);
+    }
+    else if(q.t==='gojail')await this.toJail(p);
+    this.ui();
+  },
+  buildable(p){return SQ.map((q,i)=>i).filter(i=>{const q=SQ[i];if(q.t!=='p'||this.own[i]!==p.idx||!this.full(q.g,p.idx)||this.hs[i]>=5)return false;const mn=Math.min(...this.group(q.g).map(j=>this.hs[j]));return this.hs[i]===mn&&p.cash>=GR[q.g].h})},
+  build(p,i){const c=GR[SQ[i].g].h;p.cash-=c;this.hs[i]++;this.log(`${p.name} بنى ${this.hs[i]===5?'فندق':'بيت'} في ${SQ[i].n}`)},
+  aiBuild(p){for(let k=0;k<12;k++){const l=this.buildable(p).filter(i=>p.cash-GR[SQ[i].g].h>=300);if(!l.length)break;this.build(p,l[l.length-1])}},
+  async buildMenu(p,my){
+    while(alive(my)){
+      const l=this.buildable(p);if(!l.length)return;
+      setMsg(`معاك ${m(p.cash)}. ابني بالتساوي على اللون، والبيت الخامس فندق.`,p);
+      const v=await ask([...l.map(i=>({t:`${SQ[i].n}: ${this.hs[i]===4?'فندق':'بيت '+ar(this.hs[i]+1)} بـ ${m(GR[SQ[i].g].h)}`,v:i})),{t:'خلصت بناء',v:-1,cls:'big'}],p);
+      if(v<0||!alive(my))return;this.build(p,v);this.ui();
+    }
+  },
+  async endPhase(p,my){
+    if(p.ai){this.aiBuild(p);this.ui();await sleep(400);return}
+    while(alive(my)&&this.buildable(p).length){
+      setMsg(`${p.name}: معاك لون كامل، تحب تبني قبل ما تخلّص؟`,p);
+      const c=await ask([{t:'ابني بيوت',v:'b'},{t:'خلّص دورك',v:'e',cls:'big'}],p);
+      if(!alive(my)||c==='e')return;
+      await this.buildMenu(p,my);
+    }
+  },
+  async turn(p,my){
+    let dbl=0;this.ui();setMsg('دور '+p.name+(p.jail?' (في السجن)':''),p);
+    if(p.jail){
+      let c;
+      if(p.ai){await sleep(500);c=p.cash>=300?'pay':'roll'}
+      else c=await ask([{t:'ادفع ٥٠ واخرج',v:'pay',dis:p.cash<50},{t:'جرّب تجيب دبل',v:'roll',cls:'big'}],p);
+      if(!alive(my))return;
+      if(c==='pay'){await this.pay(p,null,50);if(p.out)return;p.jail=0;this.log(`${p.name} دفع ٥٠ وخرج من السجن`);this.ui()}
+    }
+    while(alive(my)&&!p.out){
+      const v=await rollStep(p,my,2);if(!v||!alive(my))return;
+      const[a,b]=v,isD=a===b,sum=a+b;
+      if(p.jail){
+        if(isD){p.jail=0;this.log(`${p.name} جاب دبل وخرج من السجن`)}
+        else if(++p.jt<3){setMsg(`${p.name} لسه في السجن`,p);await sleep(900);return}
+        else{await this.pay(p,null,50);if(p.out)return;p.jail=0;this.log(`${p.name} دفع ٥٠ بعد ٣ محاولات وخرج`)}
+        await this.walk(p,sum,my);if(!alive(my))return;await this.land(p,sum,my);break;
+      }
+      if(isD&&++dbl===3){this.log(`${p.name}: ٣ دبل ورا بعض`);await this.toJail(p);return}
+      await this.walk(p,sum,my);if(!alive(my))return;
+      await this.land(p,sum,my);if(!alive(my)||p.out||p.jail)break;
+      if(!isD)break;
+      setMsg(`دبل! ${p.name} يرمي تاني`,p);await sleep(800);
+    }
+    if(!alive(my)||p.out)return;
+    await this.endPhase(p,my);
+  },
+  async loop(my){
+    while(alive(my)){
+      const p=players[turn];
+      if(!p.out){
+        await this.turn(p,my);if(!alive(my))return;
+        const left=players.filter(q=>!q.out);
+        if(left.length===1){this.ui();return win(left[0],my,{note:'bk'})}
+      }
+      turn=(turn+1)%players.length;
+    }
+  },
+  info(i){
+    const q=SQ[i],o=this.own[i],DESC={go:'كل ما تعدّي من هنا تقبض ٢٠٠ ج.',jail:'لو واقف هنا زيارة، مفيش حاجة. المسجون يدفع ٥٠ أو يحاول يجيب دبل، وبعد ٣ محاولات يدفع ويخرج.',park:'خانة راحة، مفيش حاجة بتحصل.',gojail:'تروح السجن على طول ومن غير ما تقبض ٢٠٠.',chance:'اسحب كارت حظ: يا تكسب يا تدفع يا تتنقل.',chest:'اسحب كارت مفاجأة.'};
+    let h=`<div class="istrip" style="background:${q.g!=null?GR[q.g].c:'#0b5d63'}"></div><h3>${q.n}</h3>`;
+    if(q.t==='p')h+=`<table class="rt">${['الإيجار','ببيت واحد','ببيتين','بـ ٣ بيوت','بـ ٤ بيوت','بفندق'].map((l,k)=>`<tr><td>${l}</td><td>${m(q.r*MULT[k])}</td></tr>`).join('')}</table><p>تمن الأرض ${m(q.p)} · البيت ${m(GR[q.g].h)}. لو معاك اللون كله والأرض فاضية، الإيجار بيتضاعف.</p>`;
+    else if(q.t==='st')h+=`<p>تمنها ${m(200)}. الإيجار ٢٥ ج لو معاك محطة واحدة، ٥٠ لاتنين، ١٠٠ لتلاتة، و٢٠٠ للأربعة.</p>`;
+    else if(q.t==='ut')h+=`<p>تمنها ${m(150)}. الإيجار ٤ أضعاف الزهر، و١٠ أضعاف لو معاك الشركتين.</p>`;
+    else if(q.t==='tax')h+=`<p>تدفع ${m(q.a)} للبنك.</p>`;
+    else h+=`<p>${DESC[q.t]}</p>`;
+    if(q.p)h+=`<p><b>المالك:</b> ${o<0?'البنك (للبيع)':esc(players[o].name)}${this.hs[i]?(this.hs[i]===5?' · فيها فندق':' · فيها '+ar(this.hs[i])+' بيت'):''}</p>`;
+    sheet(h,[{t:'تمام',v:0,cls:'big'}]);
+  }
+};
+$('#scoreBtn').onclick=async()=>{
+  if(game!=='bank'||!$('#sheet').hidden||NET.role==='guest')return;
+  const my=run;
+  const v=await sheet('<h3>تنهي اللعبة وتحسب الفايز؟</h3><p>هنجمع لكل لاعب فلوسه وتمن أراضيه وبيوته، واللي معاه أكتر يكسب.</p>',[{t:'احسب الفايز',v:1,cls:'big'},{t:'كمّل لعب',v:0,cls:'ghost'}]);
+  if(!v||!alive(my))return;
+  run++;
+  const rk=players.filter(p=>!p.out).map(p=>({p,w:BK.worth(p)})).sort((a,b)=>b.w-a.w);
+  win(rk[0].p,undefined,{rk:rk.map(r=>[r.p.idx,r.w])});
+};
+/* ========== اللعب أونلاين ========== */
+const num=(v,lo,hi,def=0)=>{v=Number(v);return Number.isFinite(v)?Math.min(hi,Math.max(lo,Math.round(v))):def};
+const col=c=>/^#[0-9a-fA-F]{3,8}$/.test(c)?c:'#888888';
+const NET={
+  on:false,role:null,R:null,room:null,code:'',name:'',me:null,peers:[],pend:{},seq:0,offs:[],pump:0,last:'',lastT:0,hostPeer:null,ap:{},lobby:{g:'ludo',n:2},sent:null,
+  guests(){return this.peers.filter(p=>!p.sameTab&&p.kind==='viewer'&&p.presence&&p.presence.role==='guest')},
+  async enter(code,role){
+    let nm=$('#myName').value.trim().slice(0,12);
+    if(!nm){$('#onStat').textContent='اكتب اسمك الأول.';$('#myName').focus();return}
+    try{localStorage.setItem('qa-name',nm)}catch(e){}
+    $('#onStat').textContent='بندخل الأوضة…';
+    let R;try{if(role==='host'&&this.room.reset)await this.room.reset('g'+code);R=await this.room.join('g'+code)}catch(e){$('#onStat').textContent='مقدرتش أدخل الأوضة دلوقتي، جرّب تاني بعد شوية.';return}
+    Object.assign(this,{on:true,role,code,name:nm,R,pend:{},peers:R.peers(),hostPeer:null,ap:{gid:-1,dn:-1,w:false,act:null},sent:null,last:''});
+    R.presence({role,name:nm}).catch(()=>{});
+    this.offs=[R.onPeers(ch=>this.peersChanged(ch)),R.on('st',x=>this.onSt(x)),R.on('ans',x=>this.onAns(x))];
+    $('#onStat').textContent='ابعت الكود لصاحبك، أو ادخل بكود أوضته.';
+    if(role==='host')this.pump=setInterval(()=>this.push(),160);
+    this.lobbyRender();show('lobby');
+  },
+  leave(){
+    clearInterval(this.pump);this.offs.forEach(f=>{try{f()}catch(e){}});this.offs=[];
+    try{this.R&&this.R.leave()}catch(e){}
+    Object.assign(this,{on:false,role:null,R:null,pend:{}});run++;game=null;$('#sheet').hidden=true;show('home');
+  },
+  peersChanged(ch){
+    this.peers=ch.peers;const me=ch.peers.find(p=>p.sameTab);if(me)this.me=me.peer;
+    if(this.role==='host'){
+      for(const lp of ch.left)players.filter(p=>p.ctl===lp.peer).forEach(p=>this.dropped(p));
+    }else{
+      const h=ch.peers.find(p=>p.presence&&p.presence.role==='host');
+      if(h)this.hostPeer=h.peer;
+      else if(this.hostPeer&&ch.left.some(p=>p.peer===this.hostPeer)){this.hostPeer=null;sheet('<h3>صاحب الأوضة خرج</h3><p>اللعبة خلصت. تقدر تعمل أوضة جديدة أو تدخل بكود تاني.</p>',[{t:'تمام',v:0,cls:'big'}]).then(()=>this.leave())}
+    }
+    if(!$('#lobby').hidden)this.lobbyRender();
+  },
+  dropped(p){
+    p.ai=true;p.ctl='ai';
+    if(game)setMsg(`${p.name} خرج… الكمبيوتر هيكمل مكانه`,p);
+    for(const[k,pr]of Object.entries(this.pend))if(pr.p===p){delete this.pend[k];S.act=null;$('#act').innerHTML='';pr.res(pr.cand?pr.cand[0]:(pr.opts.find(o=>!o.dis)||pr.opts[0]).v)}
+  },
+  lobbyRender(){
+    const b=$('#lobbyBody'),gs=this.guests();
+    if(this.role==='host'){
+      const mn=Math.min(4,1+gs.length);if(this.lobby.n<mn)this.lobby.n=mn;
+      b.innerHTML=`<h2>أوضتك جاهزة</h2><p class="lbl">كود الأوضة</p><div class="code">${this.code}</div><p>ابعت الكود ده لصاحبك. يفتح نفس صفحة الألعاب من موبايله، يكتب اسمه والكود ويدوس «ادخل».</p><p class="lbl">في الأوضة دلوقتي</p><ul class="who"><li>${esc(this.name)} <small>(انت، صاحب الأوضة)</small></li>${gs.map(g=>`<li>${esc(String(g.presence.name||'صاحبك').slice(0,12))}${g.guest?' <small>(ضيف)</small>':''}</li>`).join('')||'<li><small>مستنيين صاحبك يدخل…</small></li>'}</ul><p class="lbl">اختار اللعبة</p><div class="seg" data-k="g">${['sl','ludo','bank'].map(g=>`<button class="btn${this.lobby.g===g?' on':''}" data-v="${g}">${NAMES[g]}</button>`).join('')}</div><p class="lbl">عدد اللاعبين (اللي ناقص يلعبه الكمبيوتر)</p><div class="seg" data-k="n">${[2,3,4].map(n=>`<button class="btn${this.lobby.n===n?' on':''}" data-v="${n}"${n<mn?' disabled':''}>${ar(n)}</button>`).join('')}</div>`;
+      $('#goOnline').hidden=false;
+    }else{
+      const h=this.peers.find(p=>p.presence&&p.presence.role==='host');
+      b.innerHTML=`<h2>أوضة ${this.code}</h2>${h?`<ul class="who"><li>${esc(String(h.presence.name||'صاحب الأوضة').slice(0,12))} <small>(صاحب الأوضة)</small></li>${gs.map(g=>`<li>${esc(String(g.presence.name||'لاعب').slice(0,12))}</li>`).join('')}<li>${esc(this.name)} <small>(انت)</small></li></ul><p>دخلت! مستني صاحب الأوضة يختار اللعبة ويبدأ…</p>`:`<p>مفيش حد فاتح الأوضة دي لسه. اتأكد من الكود، أو استنى صاحبك يعمل الأوضة.</p>`}`;
+      $('#goOnline').hidden=true;
+    }
+  },
+  startGame(){
+    const g=this.lobby.g,gs=this.guests().slice(0,3),n=Math.min(4,Math.max(this.lobby.n,1+gs.length));let c=0;
+    players=seats(g,n).map((s,i)=>{
+      const base={color:COLORS[s].c,seat:s,idx:i};
+      if(i===0)return{...base,name:this.name,ai:false,ctl:'host'};
+      const gp=gs[i-1];
+      if(gp)return{...base,name:String(gp.presence.name||'صاحبك').slice(0,12)||'صاحبك',ai:false,ctl:gp.peer};
+      return{...base,name:'كمبيوتر'+(n-gs.length>2?' '+ar(++c):''),ai:true,ctl:'ai'};
+    });
+    start(g);
+  },
+  remoteAsk(opts,p){
+    const id=++this.seq;S.act={id,who:p.idx,opts:opts.map(o=>({t:o.t,v:o.v,cls:o.cls||'',dis:!!o.dis}))};
+    $('#act').innerHTML=`<span class="wait">مستني ${esc(p.name)}…</span>`;
+    return new Promise(res=>this.pend[id]={res,p,opts});
+  },
+  remotePick(s,cand,p){
+    const id=++this.seq;S.act={id,who:p.idx,pick:{s,cand}};
+    $('#act').innerHTML=`<span class="wait">مستني ${esc(p.name)} يختار قطعة…</span>`;
+    return new Promise(res=>this.pend[id]={res,p,cand});
+  },
+  onAns(x){
+    if(this.role!=='host'||!x.data)return;
+    const pr=this.pend[x.data.k];if(!pr||x.peer!==pr.p.ctl)return;
+    let v;
+    if(pr.cand){v=Number(x.data.v);if(!pr.cand.includes(v))return}
+    else{const o=pr.opts.find(o=>!o.dis&&JSON.stringify(o.v)===JSON.stringify(x.data.v));if(!o)return;v=o.v}
+    delete this.pend[x.data.k];S.act=null;$('#act').innerHTML='';pr.res(v);
+  },
+  snap(){
+    const x=game==='ludo'?{tk:LU.tk}:game==='bank'?{own:BK.own,hs:BK.hs,lg:BK.lg}:{};
+    return{gid:gameNo,g:game,t:turn,P:players.map(p=>({n:p.name,c:p.color,s:p.seat,ai:p.ai?1:0,ctl:p.ctl,pos:p.pos,cash:p.cash,j:p.jail,o:p.out?1:0})),m:curMsg,d:lastDice,a:S.act,w:W,x};
+  },
+  push(){
+    if(!this.on||this.role!=='host'||!game||$('#game').hidden)return;
+    let d=this.snap(),s=JSON.stringify(d);
+    if(new TextEncoder().encode(s).length>3900){d.x.lg=(d.x.lg||[]).slice(0,1);s=JSON.stringify(d)}
+    const now=Date.now();
+    if(s===this.last&&now-this.lastT<2000)return;
+    this.last=s;this.lastT=now;this.R.emit('st',d).catch(()=>{});
+  },
+  onSt(x){
+    if(this.role!=='guest'||x.isMe)return;
+    const h=this.peers.find(p=>p.peer===x.peer);
+    if(h&&!(h.presence&&h.presence.role==='host'))return;
+    try{this.apply(x.data)}catch(e){}
+  },
+  apply(d){
+    if(!d||typeof d!=='object')return;
+    const G=['sl','ludo','bank'].includes(d.g)?d.g:null;if(!G||!Array.isArray(d.P))return;
+    const np=d.P.slice(0,4).map((q,i)=>({name:String(q.n||'').slice(0,14)||'لاعب',color:col(q.c),seat:num(q.s,0,3),ai:!!q.ai,ctl:typeof q.ctl==='string'?q.ctl:'',idx:i,pos:num(q.pos,0,100),cash:num(q.cash,-1e6,1e8),jail:num(q.j,0,1),out:!!q.o}));
+    if(!np.length)return;
+    const fresh=d.gid!==this.ap.gid||G!==game;
+    players=np;turn=num(d.t,0,np.length-1);
+    if(fresh){
+      run++;game=G;this.ap={gid:d.gid,dn:-1,w:false,act:null};
+      $('#sheet').hidden=true;$('#gTitle').textContent=NAMES[G];$('#scoreBtn').hidden=true;$('#act').innerHTML='';$('#board').onclick=null;
+      if(G==='ludo'){LU.tk={};LU.pickRes=null;np.forEach(p=>LU.tk[p.seat]=[-1,-1,-1,-1])}
+      if(G==='bank'){BK.own=Array(40).fill(-1);BK.hs=Array(40).fill(0);BK.lg=[]}
+      ({sl:SL,ludo:LU,bank:BK})[G].draw();show('game');$('#dice').innerHTML=G==='bank'?face(1)+face(1):face(1);
+    }
+    const x=d.x||{};
+    if(G==='ludo'&&x.tk)np.forEach(p=>{const a=x.tk[p.seat];LU.tk[p.seat]=Array.isArray(a)?[0,1,2,3].map(k=>num(a[k],-1,56,-1)):[-1,-1,-1,-1]});
+    if(G==='bank'){
+      if(Array.isArray(x.own))BK.own=Array.from({length:40},(_,i)=>num(x.own[i],-1,np.length-1,-1));
+      if(Array.isArray(x.hs))BK.hs=Array.from({length:40},(_,i)=>num(x.hs[i],0,5));
+      if(Array.isArray(x.lg))BK.lg=x.lg.slice(0,5).map(t=>String(t).slice(0,140));
+    }
+    if(G==='sl'){SL.place();SL.bar()}else if(G==='ludo'){LU.place();LU.bar()}else{BK.ui();BK.logR()}
+    const mm=Array.isArray(d.m)?d.m:[];setMsg(String(mm[0]||'').slice(0,200),{color:col(mm[1])});
+    if(d.d&&Array.isArray(d.d.v)&&num(d.d.n,0,1e9)!==this.ap.dn){this.ap.dn=num(d.d.n,0,1e9);this.dice(d.d.v.slice(0,2).map(v=>num(v,1,6,1)))}
+    this.act(d.a,np);
+    if(d.w&&!this.ap.w){
+      this.ap.w=true;const wp=np[num(d.w.i,0,np.length-1)];
+      const rk=Array.isArray(d.w.rk)?d.w.rk.slice(0,4).map(r=>[num(r&&r[0],0,np.length-1),num(r&&r[1],-1e6,1e8)]):null;
+      sheet(winHtml(wp,{rk,note:d.w.note==='bk'?'bk':null},wp.ctl===this.me)+'<p style="text-align:center">لو صاحب الأوضة داس «العب تاني» هتبدأ معاه على طول.</p>',[{t:'تمام',v:0,cls:'big'},{t:'اخرج من الأوضة',v:1,cls:'ghost'}]).then(v=>{if(v)this.leave()});
+    }
+  },
+  async dice(v){
+    const box=$('#dice');box.classList.remove('pop');
+    for(let k=0;k<6;k++){box.innerHTML=v.map(()=>face(1+Math.floor(Math.random()*6))).join('');await sleep(45)}
+    box.innerHTML=v.map(face).join('');void box.offsetWidth;box.classList.add('pop');
+    try{navigator.vibrate&&navigator.vibrate(20)}catch(e){}
+  },
+  act(a,np){
+    const id=a&&typeof a==='object'?a.id:null;
+    if(id!==null&&id===this.ap.act){
+      if(this.sent&&this.sent.k===id&&Date.now()-this.sent.t>2500){this.sent.t=Date.now();this.R.emit('ans',{k:id,v:this.sent.v}).catch(()=>{})}
+      return;
+    }
+    this.ap.act=id;LU.pickRes=null;document.querySelectorAll('.tok.can').forEach(q=>q.classList.remove('can'));
+    const el=$('#act');el.innerHTML='';
+    if(!a)return;
+    const p=np[num(a.who,0,np.length-1)];
+    if(!p||p.ctl!==this.me){el.innerHTML=`<span class="wait">دور ${esc(p?p.name:'')}…</span>`;return}
+    try{navigator.vibrate&&navigator.vibrate([40,60,40])}catch(e){}
+    if(Array.isArray(a.opts)){
+      a.opts.slice(0,12).forEach(o=>{const b=document.createElement('button');b.className='btn '+(['big','ghost'].includes(o.cls)?o.cls:'');b.textContent=String(o.t||'').slice(0,60);b.disabled=!!o.dis;b.onclick=()=>this.answer(id,o.v);el.appendChild(b)});
+    }else if(a.pick&&Array.isArray(a.pick.cand)&&game==='ludo'){
+      const s=num(a.pick.s,0,3),cand=a.pick.cand.map(t=>num(t,0,3)).filter(t=>LU.tk[s]);
+      LU.ps=s;LU.cand=cand;cand.forEach(t=>{const e=$('#lt'+s+t);if(e)e.classList.add('can')});
+      el.innerHTML='<span class="wait">دوس على القطعة اللي بتتنطط</span>';
+      LU.pickRes=v=>this.answer(id,v);
+    }
+  },
+  answer(id,v){
+    this.sent={k:id,v,t:Date.now()};
+    $('#act').innerHTML='<span class="wait">تمام…</span>';
+    this.R.emit('ans',{k:id,v}).catch(e=>{if(e&&e.code==='not_permitted')setMsg('مش مسموحلك تلعب هنا: صاحب الصفحة لازم يشاركها معاك بصلاحية «مساهم» أو أعلى.')});
+  }
+};
+try{const n=localStorage.getItem('qa-name');if(n)$('#myName').value=n}catch(e){}
+$('#mkRoom').onclick=()=>NET.enter(String(1000+Math.floor(Math.random()*9000)),'host');
+$('#joinRoom').onclick=()=>{const c=$('#codeIn').value.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g,'');if(c.length!==4){$('#onStat').textContent='الكود ٤ أرقام.';return}NET.enter(c,'guest')};
+$('#leaveLobby').onclick=()=>NET.leave();
+$('#goOnline').onclick=()=>NET.startGame();
+$('#lobbyBody').onclick=e=>{const b=e.target.closest('.seg .btn');if(!b||b.disabled)return;const k=b.parentNode.dataset.k;NET.lobby[k]=k==='n'?+b.dataset.v:b.dataset.v;NET.lobbyRender()};
+
+
+/* ========== أونلاين جوّه التطبيق (Firebase) ========== */
+const FB_URL='';
+const FB={
+  url(){let u='';try{u=localStorage.getItem('qa-fb')||''}catch(e){}return(u||FB_URL).trim().replace(/\/+$/,'')},
+  provider(base){
+    return{
+      reset:name=>fetch(`${base}/rooms/${name}.json`,{method:'DELETE'}).catch(()=>{}),
+      join:name=>FB.join(base,name)
+    };
+  },
+  async join(base,name){
+    const me='a'+Math.random().toString(36).slice(2,10),root=`${base}/rooms/${name}`;
+    const req=(path,method,body)=>fetch(`${root}/${path}.json`,{method,body:body===undefined?undefined:JSON.stringify(body)}).then(r=>{if(!r.ok)throw new Error('http '+r.status);return r});
+    await req('p/'+me,'PUT',{ts:{'.sv':'timestamp'}});
+    const H={v:null},seen={},pSig={},lastSeen={},ls={},pcb=[];
+    let ready=false,cnt=0,myPres={},peersArr=[],closed=false,es=null;
+    const setAt=(path,data)=>{
+      const parts=path.split('/').filter(Boolean);
+      if(!parts.length){H.v=data;return}
+      if(!H.v||typeof H.v!=='object')H.v={};
+      let o=H.v;for(let i=0;i<parts.length-1;i++){if(!o[parts[i]]||typeof o[parts[i]]!=='object')o[parts[i]]={};o=o[parts[i]]}
+      const k=parts[parts.length-1];if(data===null)delete o[k];else o[k]=data;
+    };
+    const strip=v=>{const pr={...(v||{})};delete pr.ts;return pr};
+    const recompute=()=>{
+      const P=(H.v&&H.v.p)||{},now=Date.now();
+      const alive=Object.keys(P).filter(k=>k===me||now-(lastSeen[k]||0)<16000);
+      const old=new Map(peersArr.map(p=>[p.peer,p]));
+      const next=alive.map(k=>{const o=old.get(k);return o&&o.__s===pSig[k]?o:{peer:k,presence:strip(P[k]),sameTab:k===me,isMe:k===me,kind:'viewer',guest:false,by:null,updatedAt:lastSeen[k]||now,__s:pSig[k]}});
+      const joined=next.filter(p=>!old.has(p.peer)),left=[...old.values()].filter(p=>!alive.includes(p.peer)),updated=next.filter(p=>old.has(p.peer)&&old.get(p.peer)!==p);
+      if(!joined.length&&!left.length&&!updated.length&&ready)return;
+      peersArr=next;const ch={peers:peersArr,joined,left,updated};pcb.forEach(f=>{try{f(ch)}catch(e){}});
+    };
+    const changed=()=>{
+      const v=H.v||{},P=v.p||{},now=Date.now();
+      for(const[k,val]of Object.entries(P)){const sig=JSON.stringify(val);if(pSig[k]!==sig){pSig[k]=sig;lastSeen[k]=now}}
+      const E=v.e||{};
+      for(const[topic,byPeer]of Object.entries(E))for(const[peer,msg]of Object.entries(byPeer||{})){
+        const key=topic+'/'+peer,n=msg&&msg.n;if(seen[key]===n)continue;
+        const first=!(key in seen);seen[key]=n;if(first&&!ready)continue;
+        (ls[topic]||[]).forEach(f=>{try{f({topic,data:msg.d,peer,isMe:peer===me,sameTab:peer===me,kind:'viewer',guest:false,by:null})}catch(e){}});
+      }
+      recompute();ready=true;
+    };
+    const open=()=>{
+      es=new EventSource(`${root}.json`);
+      const on=ev=>{try{const m=JSON.parse(ev.data);if(!m)return;if(ev.type==='put')setAt(m.path,m.data);else if(m.data&&typeof m.data==='object')for(const[k,val]of Object.entries(m.data))setAt(m.path.replace(/\/$/,'')+'/'+k,val);changed()}catch(e){}};
+      es.addEventListener('put',on);es.addEventListener('patch',on);
+    };
+    open();
+    const beat=setInterval(()=>{if(!closed)req('p/'+me+'/ts','PUT',{'.sv':'timestamp'}).catch(()=>{})},5000);
+    const sweep=setInterval(()=>{if(!closed)recompute()},3000);
+    const R={
+      name,
+      emit(topic,data){if(closed)return Promise.resolve();cnt++;return req(`e/${topic}/${me}`,'PUT',{d:data===undefined?null:data,n:cnt}).then(()=>{},()=>{})},
+      on(topic,fn){(ls[topic]=ls[topic]||[]).push(fn);return()=>{ls[topic]=(ls[topic]||[]).filter(f=>f!==fn)}},
+      presence(patch){for(const[k,v]of Object.entries(patch)){if(v===null)delete myPres[k];else myPres[k]=v}return req('p/'+me,'PUT',{...myPres,ts:{'.sv':'timestamp'}}).then(()=>{},()=>{})},
+      peers:()=>peersArr,
+      onPeers(fn){pcb.push(fn);setTimeout(()=>{if(peersArr.length)fn({peers:peersArr,joined:peersArr,left:[],updated:[]})},0);return()=>{const i=pcb.indexOf(fn);if(i>=0)pcb.splice(i,1)}},
+      connected:()=>!closed&&!!es&&es.readyState===1,
+      onConnection:()=>()=>{},
+      leave(){if(closed)return Promise.resolve();closed=true;clearInterval(beat);clearInterval(sweep);try{es.close()}catch(e){}
+        return Promise.all([req('p/'+me,'DELETE'),...Object.keys(ls).map(t=>req(`e/${t}/${me}`,'DELETE'))]).then(()=>{},()=>{})}
+    };
+    return R;
+  }
+};
+const IN_APP=/QaadaApp/.test(navigator.userAgent);
+if(IN_APP){const t=document.querySelector('.tip');if(t)t.hidden=true}
+window.__back=()=>{
+  if(!$('#sheet').hidden){const b=document.querySelectorAll('#sheetAct .btn');if(b.length)b[b.length-1].click();return true}
+  if(!$('#game').hidden){$('#exitBtn').click();return true}
+  if(!$('#lobby').hidden){NET.leave();return true}
+  if(!$('#setup').hidden){show('home');return true}
+  return false;
+};
+$('#fbSave').onclick=()=>{
+  const u=$('#fbUrl').value.trim();
+  if(!/^https:\/\/[a-z0-9.-]+\.(firebaseio\.com|firebasedatabase\.app)\/?$/i.test(u)&&!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/?$/.test(u)){$('#onStat').textContent='الرابط لازم يكون رابط Firebase Realtime Database، شكله كده: https://اسم-المشروع-default-rtdb.firebaseio.com';return}
+  try{localStorage.setItem('qa-fb',u)}catch(e){}
+  NET.room=FB.provider(FB.url());$('#fbSet').hidden=true;onlineOn();
+};
+
+function onlineOn(){$('#mkRoom').disabled=false;$('#joinRoom').disabled=false;$('#onStat').textContent='اعمل أوضة وابعت الكود لصاحبك، أو ادخل بكود أوضته. كل واحد بيلعب من موبايله.'}
+(async()=>{
+  let r=null;
+  if(window.claude&&window.claude.use){try{r=await window.claude.use('room')}catch(e){r=null}}
+  else if(FB.url())r=FB.provider(FB.url());
+  NET.room=r;
+  if(r)onlineOn();
+  else if(!window.claude){$('#fbSet').hidden=false;$('#onStat').textContent='عشان تلعب أونلاين، حط رابط قاعدة بيانات Firebase مرة واحدة (هتلاقي الخطوات في رسالة Claude).'}
+  else $('#onStat').textContent='اللعب أونلاين بيشتغل لما تفتح الصفحة من claude.ai وانت مسجّل دخول. صاحبك كمان لازم يكون مسجّل ومتشارك معاه الصفحة.';
+})();
+}
+</script>
+</body>
+</html>

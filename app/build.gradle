@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+}
+
+def runNo = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
+
+android {
+    namespace 'com.qaada.games'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.qaada.games"
+        minSdk 26
+        targetSdk 34
+        versionCode runNo
+        versionName "1.0.${runNo}"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("qaada.jks")
+            storePassword "qaada-games"
+            keyAlias "qaada"
+            keyPassword "qaada-games"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.11.0'
+}
